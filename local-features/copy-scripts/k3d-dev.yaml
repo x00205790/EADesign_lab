@@ -1,0 +1,27 @@
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: dev
+servers: 1
+agents: 0
+image: docker.io/rancher/k3s:v1.27.4-k3s1
+kubeAPI:
+  host: k3d-dev-serverlb
+  hostPort: "6443"
+network: k3d-network
+
+ports:
+  - port: 80:80 # same as `--port '8080:80@loadbalancer'`
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+
+options:
+  k3s:
+    extraArgs:
+      - arg: --tls-san=k3d-dev-serverlb
+        nodeFilters:
+          - server:*

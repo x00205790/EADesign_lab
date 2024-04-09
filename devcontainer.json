@@ -1,0 +1,54 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/kubernetes-helm
+{
+	"name": "Kubernetes - Local Configuration",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "ghcr.io/x00205790/dev-container:latest",
+
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+		// This is overwiring the config created by k3d
+		// We dont need it as we k3d generates it own config file
+		// "./local-features/copy-kube-config": {},
+		"./local-features/copy-scripts": {}
+	},
+
+	"remoteEnv": {
+		"SYNC_LOCALHOST_KUBECONFIG": "true"
+	},
+
+	"initializeCommand": "cd .devcontainer && bash ensure-mount-sources && docker network create --attachable k3d-network || true",
+	"mounts": [
+		{
+			"source": "${env:HOME}${env:USERPROFILE}/.kube",
+			"target": "/home/vscode/.kube",
+			"type": "bind"
+		},
+		{
+			"source": "${env:HOME}${env:USERPROFILE}/.ssh/",
+			"target": "/home/vscode/.ssh/",
+			"type": "bind"
+		},
+		{
+			"source": "${env:HOME}${env:USERPROFILE}/.config/",
+			"target": "/home/vscode/.config/",
+			"type": "bind"
+		}
+	],
+
+	"runArgs": [
+		"--network=k3d-network"
+	]
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "kubectl version",
+
+	// Configure tool-specific properties.
+	// "customizations": {}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
